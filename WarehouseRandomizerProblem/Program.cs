@@ -16,12 +16,14 @@ namespace WarehouseRandomizerProblem
             try
             {
                 long tick = DateTime.Now.Ticks;
-                for (int i = 0; i < 100; i += 1)
+                for (int i = 1000000; i < 10000000; i += 1)
                 {
-                    int randomInt = randomizer.FetchRandomNumber(1, 100, reservedNumbers);
-                    reservedNumbers.Add(randomInt);
-                    Console.WriteLine(randomInt);
+                    if(i!=1234567) reservedNumbers.Add(i);
                 }
+
+                int randomInt = randomizer.FetchRandomNumber(1000000, 10000000, reservedNumbers);
+                Console.WriteLine(randomInt);
+                reservedNumbers.Add(randomInt);
                 Console.WriteLine(reservedNumbers.GroupBy(x => x)
                              .Where(g => g.Count() > 1).Count() > 0);
 

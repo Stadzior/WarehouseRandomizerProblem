@@ -23,6 +23,8 @@ namespace WarehouseRandomizerProblem
             {
                 int pivotNumber = GetMedian(minValue, maxValue);
 
+                bool shouldGoLeft = new Random().Next(2) == 1;
+
                 List<int> leftNodeNumbers = reservedNumbers
                     .Where((number) => number <= pivotNumber).ToList();
 
@@ -37,47 +39,26 @@ namespace WarehouseRandomizerProblem
                     }
                     else
                     {
-                        if (!IsNodeFull(leftNodeNumbers, minValue, pivotNumber) && !IsNodeFull(rightNodeNumbers, pivotNumber, maxValue))
+                        if (IsNodeFull(leftNodeNumbers, minValue, pivotNumber) || IsNodeFull(rightNodeNumbers, pivotNumber, maxValue))
                         {
-                            bool coinToss = new Random().Next(2) == 1;
-                            if (coinToss)
-                            {
-                                reservedNumbers = leftNodeNumbers;
-                                maxValue = pivotNumber;
-                            }
-                            else
-                            {
-                                reservedNumbers = rightNodeNumbers;
-                                minValue = pivotNumber + 1;
-                            }
-                        }
-                        else
-                        {
-                            if (!IsNodeFull(leftNodeNumbers, minValue, pivotNumber))
-                            {
-                                reservedNumbers = leftNodeNumbers;
-                                maxValue = pivotNumber;
-                            }
-                            else
-                            {
-                                reservedNumbers = rightNodeNumbers;
-                                minValue = pivotNumber + 1;
-                            }
+                            shouldGoLeft = !IsNodeFull(leftNodeNumbers, minValue, pivotNumber);
                         }
                     }
                 }
                 else
                 {
-                    if (leftNodeNumbers.Count < rightNodeNumbers.Count)
-                    {
-                        reservedNumbers = leftNodeNumbers;
-                        maxValue = pivotNumber;
-                    }
-                    else
-                    {
-                        reservedNumbers = rightNodeNumbers;
-                        minValue = pivotNumber + 1;
-                    }
+                    shouldGoLeft = leftNodeNumbers.Count < rightNodeNumbers.Count;
+                }
+
+                if(shouldGoLeft)
+                {
+                    reservedNumbers = leftNodeNumbers;
+                    maxValue = pivotNumber;
+                }
+                else
+                {
+                    reservedNumbers = rightNodeNumbers;
+                    minValue = pivotNumber + 1;
                 }
 
                 return FetchRandomNumber(minValue, maxValue, reservedNumbers);
@@ -95,7 +76,7 @@ namespace WarehouseRandomizerProblem
         /// <param name="minValue">minimum integer</param>
         /// <param name="maxValue"></param>
         /// <returns></returns>
-        private static int GetMedian(int minValue, int maxValue)
+        private int GetMedian(int minValue, int maxValue)
         {
             return (maxValue + (minValue - 1)) / 2;
         }
